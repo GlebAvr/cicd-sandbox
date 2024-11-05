@@ -1,4 +1,4 @@
-describe('FDIC Failed Bank List Search', () => {
+describe('Test Number 1', () => {
   
     it.skip('should allow searching for "Silicon" in the search field', () => {
       cy.visit('https://www.fdic.gov/bank-failures/failed-bank-list');  
