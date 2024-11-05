@@ -10,9 +10,9 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        group: 
-          - test1: "cypress/e2e/Bank/test.cy.js"
-          - test2: "cypress/e2e/Bank/test2.cy.js"
+        group:
+          - "cypress/e2e/Bank/test.cy.js"
+          - "cypress/e2e/Bank/test2.cy.js"
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -30,7 +30,7 @@ jobs:
 
       - name: Run Cypress tests
         run: |
-          npx cypress run --spec "${{ matrix.group }}" --reporter mochawesome --reporter-options reportDir=cypress/reports,reportFilename=mochawesome-${{ matrix.group }}.json
+          npx cypress run --spec "${{ matrix.group }}" --reporter mochawesome --reporter-options reportDir=cypress/reports,reportFilename=mochawesome-${{ matrix.group }}
 
       - name: Upload report
         if: always()
@@ -48,14 +48,7 @@ jobs:
         if: always()
         uses: actions/download-artifact@v4
         with:
-          name: report-test1
-          path: cypress/reports
-
-      - name: Download report artifacts
-        if: always()
-        uses: actions/download-artifact@v4
-        with:
-          name: report-test2
+          name: report-test
           path: cypress/reports
 
       - name: Install mochawesome-merge
