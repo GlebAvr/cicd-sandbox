@@ -24,7 +24,7 @@ jobs:
         run: npm install
 
       - name: Run Cypress tests - Group 1
-        run: npx cypress run --spec "cypress/e2e/Bank/test.cy.js"
+        run: npx cypress run --spec "cypress/e2e/Bank/test.cy.js" --reporter mochawesome --reporter-options reportDir=cypress/reports,reportFilename=mochawesome-test1.json
 
       - name: Upload Group 1 report
         if: always()
@@ -51,7 +51,7 @@ jobs:
         run: npm install
 
       - name: Run Cypress tests - Group 2
-        run: npx cypress run --spec "cypress/e2e/Bank/test2.cy.js"
+        run: npx cypress run --spec "cypress/e2e/Bank/test2.cy.js" --reporter mochawesome --reporter-options reportDir=cypress/reports,reportFilename=mochawesome-test2.json
 
       - name: Upload Group 2 report
         if: always()
