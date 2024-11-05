@@ -1,0 +1,12 @@
+# Node modules
+node_modules/
+
+# Logs
+*.log
+
+# OS files
+.DS_Store
+
+# Cypress specific files (as per your setup)
+cypress/screenshots/
+cypress/videos/
