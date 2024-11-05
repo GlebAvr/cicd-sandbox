@@ -10,3 +10,6 @@ node_modules/
 # Cypress specific files (as per your setup)
 cypress/screenshots/
 cypress/videos/
+
+# Mochawesome report files
+cypress/reports/
