@@ -84,6 +84,9 @@ jobs:
 
       - name: Install mochawesome-report-generator
         run: npm install mochawesome-report-generator --save-dev
+      
+      - name: Install Allure Command Line
+        run: npm install -g allure-commandline --save-dev
 
       - name: Merge Reports
         run: |
