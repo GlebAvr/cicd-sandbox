@@ -1,12 +1,9 @@
 const { defineConfig } = require("cypress");
 
 module.exports = defineConfig({
-  reporter: "mochawesome",
+  reporter: "@shelex/cypress-allure-plugin", // Use Allure reporter
   reporterOptions: {
-    reportDir: "cypress/reports",
-    overwrite: false,
-    html: false,
-    json: true,
+    allureResultsPath: "cypress/allure-results", // Set the location for the allure results
   },
   e2e: {
     setupNodeEvents(on, config) {
