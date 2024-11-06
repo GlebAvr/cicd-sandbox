@@ -29,7 +29,8 @@ jobs:
 
       - name: Run Cypress tests
         run: |
-          npx cypress run --spec "${{ matrix.test_file }}" --reporter mochawesome --reporter-options "reportDir=cypress/reports,reportFilename=mochawesome-${{ matrix.test_file }}"
+          TEST_NAME=$(basename ${{ matrix.test_file }} .js)
+          npx cypress run --spec "${{ matrix.test_file }}" --reporter mochawesome --reporter-options "reportDir=cypress/reports,reportFilename=mochawesome-${TEST_NAME}"
 
       - name: Upload report
         if: always()
