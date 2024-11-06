@@ -1,4 +1,4 @@
-name: Cypress Tests
+name: Cypress Tests with Allure Reports
 
 on:
   push:
@@ -23,15 +23,19 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Run Cypress tests - Group 1
-        run: npx cypress run --spec "cypress/e2e/Bank/test.cy.js" --reporter mochawesome --reporter-options reportDir=cypress/reports,reportFilename=mochawesome-test1.json
+      - name: Install Allure Reporter and Command Line (CI only)
+        run: |
+          npm install --save-dev @shelex/cypress-allure-plugin allure-commandline
+
+      - name: Run Cypress tests - Group 1 with Allure Reporter
+        run: npx cypress run --spec "cypress/e2e/Bank/test.cy.js" --reporter @shelex/cypress-allure-plugin --reporter-options allureResultsPath=cypress/allure-results
 
       - name: Upload Group 1 report
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: report-group-1
-          path: cypress/reports/*.json
+          path: cypress/allure-results/*.json
 
   run-tests-group-2:
     runs-on: ubuntu-latest
@@ -50,15 +54,19 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Run Cypress tests - Group 2
-        run: npx cypress run --spec "cypress/e2e/Bank/test2.cy.js" --reporter mochawesome --reporter-options reportDir=cypress/reports,reportFilename=mochawesome-test2.json
+      - name: Install Allure Reporter and Command Line (CI only)
+        run: |
+          npm install --save-dev @shelex/cypress-allure-plugin allure-commandline
+
+      - name: Run Cypress tests - Group 2 with Allure Reporter
+        run: npx cypress run --spec "cypress/e2e/Bank/test2.cy.js" --reporter @shelex/cypress-allure-plugin --reporter-options allureResultsPath=cypress/allure-results
 
       - name: Upload Group 2 report
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: report-group-2
-          path: cypress/reports/*.json
+          path: cypress/allure-results/*.json
 
   merge-reports:
     runs-on: ubuntu-latest
@@ -70,38 +78,30 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: report-group-1
-          path: cypress/reports
+          path: cypress/allure-results
 
       - name: Download report artifacts - Group 2
         if: always()
         uses: actions/download-artifact@v4
         with:
           name: report-group-2
-          path: cypress/reports
+          path: cypress/allure-results
 
       - name: List files before merging
-        run: ls -al cypress/reports/
+        run: ls -al cypress/allure-results/
 
       - name: Clear previous reports
-        run: rm -f cypress/reports/*.json
+        run: rm -f cypress/allure-results/*.json
 
-      - name: Merge Reports
+      - name: Merge Allure Results
         run: |
-          mochawesome-merge cypress/reports/*.json > cypress/reports/merged-report.json || exit 1
+          allure generate cypress/allure-results --clean -o cypress/allure-report
 
-      - name: Debug merged report
-        run: cat cypress/reports/merged-report.json
+      - name: Debug Allure report
+        run: ls -al cypress/allure-report/
 
-      - name: Validate merged report
-        run: |
-          jq empty cypress/reports/merged-report.json || exit 1
-
-      - name: Generate HTML report
-        run: |
-          npx mochawesome-report-generator cypress/reports/merged-report.json --reportDir=cypress/reports --reportFilename=merged-report.html
-
-      - name: Upload Merged Report
+      - name: Upload Merged Allure Report
         uses: actions/upload-artifact@v4
         with:
-          name: cypress-merged-report
-          path: cypress/reports/merged-report.html
+          name: allure-report
+          path: cypress/allure-report
