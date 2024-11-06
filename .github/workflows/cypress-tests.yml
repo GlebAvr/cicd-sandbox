@@ -24,14 +24,14 @@ jobs:
         run: npm install
 
       - name: Run Cypress tests - Group 1
-        run: npx cypress run --spec "cypress/e2e/Bank/test.cy.js" --reporter mochawesome --reporter-options reportDir=cypress/reports,reportFilename=mochawesome-test1.html
+        run: npx cypress run --spec "cypress/e2e/Bank/test.cy.js" --reporter mochawesome --reporter-options reportDir=cypress/reports,reportFilename=mochawesome-test1.json
 
       - name: Upload Group 1 report
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: report-group-1
-          path: cypress/reports/*.html
+          path: cypress/reports/*.json
 
   run-tests-group-2:
     runs-on: ubuntu-latest
@@ -51,14 +51,14 @@ jobs:
         run: npm install
 
       - name: Run Cypress tests - Group 2
-        run: npx cypress run --spec "cypress/e2e/Bank/test2.cy.js" --reporter mochawesome --reporter-options reportDir=cypress/reports,reportFilename=mochawesome-test2.html
+        run: npx cypress run --spec "cypress/e2e/Bank/test2.cy.js" --reporter mochawesome --reporter-options reportDir=cypress/reports,reportFilename=mochawesome-test2.json
 
       - name: Upload Group 2 report
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: report-group-2
-          path: cypress/reports/*.html
+          path: cypress/reports/*.json
 
   merge-reports:
     runs-on: ubuntu-latest
@@ -84,9 +84,16 @@ jobs:
 
       - name: Merge Reports
         run: |
-          mochawesome-merge cypress/reports/*.html > cypress/reports/merged-report.html
+          mochawesome-merge cypress/reports/*.json > cypress/reports/merged-report.json
 
-      - name: Upload Merged Report
+      - name: Install mochawesome-report-generator
+        run: npm install -g mochawesome-report-generator
+
+      - name: Generate HTML Report
+        run: |
+          mochawesome-report-generator cypress/reports/merged-report.json > cypress/reports/merged-report.html
+
+      - name: Upload Merged HTML Report
         uses: actions/upload-artifact@v4
         with:
           name: cypress-merged-report

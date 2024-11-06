@@ -5,8 +5,8 @@ module.exports = defineConfig({
   reporterOptions: {
     reportDir: "cypress/reports",
     overwrite: false,
-    html: true,
-    json: false,
+    html: false,
+    json: true,
   },
   e2e: {
     setupNodeEvents(on, config) {
