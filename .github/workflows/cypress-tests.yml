@@ -29,7 +29,7 @@ jobs:
 
       - name: Run Cypress tests
         run: |
-          npx cypress run --spec "${{ matrix.test_file }}" --reporter mochawesome --reporter-options reportDir=cypress/reports,reportFilename=mochawesome-${{ matrix.test_file }}
+          npx cypress run --spec "${{ matrix.test_file }}" --reporter mochawesome --reporter-options "reportDir=cypress/reports,reportFilename=mochawesome-${{ matrix.test_file }}"
 
       - name: Upload report
         if: always()
