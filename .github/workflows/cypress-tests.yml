@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        group:
+        group: 
           - "cypress/e2e/Bank/test.cy.js"
           - "cypress/e2e/Bank/test2.cy.js"
     steps:
