@@ -84,6 +84,11 @@ jobs:
 
       - name: Install mochawesome-report-generator
         run: npm install -g mochawesome-report-generator
+      
+      - name: Clear previous reports
+        run: |
+          echo "Clearing previous reports..."
+          rm -rf cypress/reports/*
 
       - name: Merge Reports
         run: |
