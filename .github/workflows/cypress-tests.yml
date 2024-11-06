@@ -80,18 +80,18 @@ jobs:
           path: cypress/reports
 
       - name: Install mochawesome-merge
-        run: npm install mochawesome-merge --save-dev
+        run: npm install -g mochawesome-merge
 
       - name: Install mochawesome-report-generator
-        run: npm install mochawesome-report-generator --save-dev
+        run: npm install -g mochawesome-report-generator
 
       - name: Merge Reports
         run: |
-          npx mochawesome-merge cypress/reports/*.json > cypress/reports/merged-report.json
+          mochawesome-merge cypress/reports/*.json > cypress/reports/merged-report.json
 
       - name: Generate HTML report
         run: |
-          npx mochawesome-report-generator cypress/reports/merged-report.json > cypress/reports/merged-report.html
+          npx mochawesome-report-generator cypress/reports/merged-report.json --reportDir=cypress/reports --reportFilename=merged-report.html
 
       - name: Upload Merged Report
         uses: actions/upload-artifact@v4
