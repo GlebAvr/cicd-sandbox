@@ -63,7 +63,7 @@ jobs:
   merge-reports:
     runs-on: ubuntu-latest
     needs: [run-tests-group-1, run-tests-group-2]
-    if: ${{ always() }} # Run this step regardless of the test group status
+    if: ${{ always() }}  # Run this step regardless of the test group status
     steps:
       - name: Download report artifacts - Group 1
         if: always()
@@ -80,23 +80,20 @@ jobs:
           path: cypress/reports
 
       - name: Install mochawesome-merge
-        run: npm install -g mochawesome-merge
-      
+        run: npm install mochawesome-merge --save-dev
+
       - name: Install mochawesome-report-generator
-        run: npm install -g mochawesome-report-generator  
+        run: npm install mochawesome-report-generator --save-dev
 
       - name: Merge Reports
         run: |
-          mochawesome-merge cypress/reports/*.json > cypress/reports/merged-report.json
+          npx mochawesome-merge cypress/reports/*.json > cypress/reports/merged-report.json
 
-      - name: Install mochawesome-report-generator
-        run: npm install -g mochawesome-report-generator
-
-      - name: Generate HTML Report
+      - name: Generate HTML report
         run: |
-          mochawesome-report-generator cypress/reports/merged-report.json > cypress/reports/merged-report.html
+          npx mochawesome-report-generator cypress/reports/merged-report.json > cypress/reports/merged-report.html
 
-      - name: Upload Merged HTML Report
+      - name: Upload Merged Report
         uses: actions/upload-artifact@v4
         with:
           name: cypress-merged-report
