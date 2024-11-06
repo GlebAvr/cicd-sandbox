@@ -8,9 +8,6 @@ on:
 jobs:
   run-tests:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        group: [1, 2]  # Parallel test groups
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -26,33 +23,17 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Run Cypress tests with Allure reporting
+      - name: Run Cypress Test - Group 1
         run: |
-          npx cypress run --spec "cypress/e2e/Bank/test${{ matrix.group }}.cy.js" \
-            --reporter mocha-allure-reporter \
-            --reporter-options allureResultsPath=cypress/allure-results
+          npx cypress run --spec "cypress/e2e/Bank/test.cy.js" \
+          --reporter mocha-allure-reporter \
+          --reporter-options allureResultsPath=cypress/allure-results
 
-      - name: Upload Allure Results
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: allure-results-group-${{ matrix.group }}
-          path: cypress/allure-results
-
-  generate-report:
-    runs-on: ubuntu-latest
-    needs: run-tests
-    steps:
-      - name: Download Allure Results
-        uses: actions/download-artifact@v4
-        with:
-          name: allure-results-group-1
-          path: cypress/allure-results
-      - name: Download Allure Results Group 2
-        uses: actions/download-artifact@v4
-        with:
-          name: allure-results-group-2
-          path: cypress/allure-results
+      - name: Run Cypress Test - Group 2
+        run: |
+          npx cypress run --spec "cypress/e2e/Bank/test2.cy.js" \
+          --reporter mocha-allure-reporter \
+          --reporter-options allureResultsPath=cypress/allure-results
 
       - name: Install Allure Commandline
         run: |
