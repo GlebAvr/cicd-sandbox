@@ -81,6 +81,9 @@ jobs:
 
       - name: Install mochawesome-merge
         run: npm install -g mochawesome-merge
+      
+      - name: Install mochawesome-report-generator
+        run: npm install -g mochawesome-report-generator  
 
       - name: Merge Reports
         run: |
