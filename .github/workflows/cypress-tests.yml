@@ -1,4 +1,4 @@
-name: Cypress Tests
+name: Cypress Tests with Allure Report
 
 on:
   push:
@@ -6,8 +6,11 @@ on:
       - master
 
 jobs:
-  run-tests-group-1:
+  run-tests:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        group: [1, 2]  # Parallel test groups
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -23,83 +26,44 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Run Cypress tests - Group 1
-        run: npx cypress run --spec "cypress/e2e/Bank/test.cy.js" --reporter mocha-allure-reporter --reporter-options targetDir=cypress/allure-results/group1
+      - name: Run Cypress tests with Allure reporting
+        run: |
+          npx cypress run --spec "cypress/e2e/Bank/test${{ matrix.group }}.cy.js" \
+            --reporter mocha-allure-reporter \
+            --reporter-options allureResultsPath=cypress/allure-results
 
-      - name: Upload Group 1 report
+      - name: Upload Allure Results
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: allure-report-group-1
-          path: cypress/allure-results/group1
+          name: allure-results-group-${{ matrix.group }}
+          path: cypress/allure-results
 
-  run-tests-group-2:
+  generate-report:
     runs-on: ubuntu-latest
+    needs: run-tests
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Cache Cypress binary
-        uses: actions/cache@v4
-        with:
-          path: ~/.cache/Cypress
-          key: cypress-${{ runner.os }}-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            cypress-${{ runner.os }}-
-
-      - name: Install dependencies
-        run: npm install
-
-      - name: Run Cypress tests - Group 2
-        run: npx cypress run --spec "cypress/e2e/Bank/test2.cy.js" --reporter mocha-allure-reporter --reporter-options targetDir=cypress/allure-results/group2
-
-      - name: Upload Group 2 report
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: allure-report-group-2
-          path: cypress/allure-results/group2
-
-  merge-and-generate-allure-report:
-    runs-on: ubuntu-latest
-    needs: [run-tests-group-1, run-tests-group-2]
-    if: ${{ always() }} # Run this step regardless of the test group status
-    steps:
-      - name: Download report artifacts - Group 1
-        if: always()
+      - name: Download Allure Results
         uses: actions/download-artifact@v4
         with:
-          name: allure-report-group-1
-          path: cypress/allure-results/group1
-
-      - name: Download report artifacts - Group 2
-        if: always()
+          name: allure-results-group-1
+          path: cypress/allure-results
+      - name: Download Allure Results Group 2
         uses: actions/download-artifact@v4
         with:
-          name: allure-report-group-2
-          path: cypress/allure-results/group2
+          name: allure-results-group-2
+          path: cypress/allure-results
 
-      - name: Merge Allure Results
+      - name: Install Allure Commandline
         run: |
-          mkdir -p cypress/allure-results/merged
-          cp -r cypress/allure-results/group1/* cypress/allure-results/merged/
-          cp -r cypress/allure-results/group2/* cypress/allure-results/merged/
-
-      - name: Install Allure CLI
-        run: |
-          sudo apt update
-          sudo apt install -y openjdk-11-jre wget
-          wget https://github.com/allure-framework/allure2/releases/download/2.17.3/allure-2.17.3.tgz
-          tar -zxvf allure-2.17.3.tgz
-          sudo mv allure-2.17.3 /opt/allure
-          sudo ln -s /opt/allure/bin/allure /usr/bin/allure
+          npm install -g allure-commandline --save-dev
 
       - name: Generate Allure HTML Report
         run: |
-          allure generate cypress/allure-results/merged --clean -o cypress/allure-report
+          allure generate cypress/allure-results --clean -o allure-report
 
       - name: Upload Allure HTML Report
         uses: actions/upload-artifact@v4
         with:
           name: allure-html-report
-          path: cypress/allure-report
+          path: allure-report
