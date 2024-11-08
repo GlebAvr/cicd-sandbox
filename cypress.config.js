@@ -1,9 +1,13 @@
 const { defineConfig } = require("cypress");
 
 module.exports = defineConfig({
-  reporter: "mocha-allure-reporter",
-  reporterOptions: {
-    targetDir: "cypress/allure-results",  // Specify where to save the Allure results
+  "reporter": "mochawesome",
+  "reporterOptions": {
+    "reportDir": "cypress/reports",
+    "reportFilename": "mochawesome-report",
+    "overwrite": false,
+    "html": false,
+    "json": true
   },
   e2e: {
     setupNodeEvents(on, config) {
